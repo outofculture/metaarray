@@ -37,7 +37,7 @@ except ImportError:
 
 
 class MetaArray(object):
-    """N-dimensional array with meta data such as axis titles, units, and column names.
+    """N-dimensional array with metadata such as axis titles, units, and column names.
   
     May be initialized with a file name, a tuple representing the dimensions of the array,
     or any arguments that could be passed on to numpy.array()
