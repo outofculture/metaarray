@@ -2,32 +2,10 @@ import os
 
 import numpy as np
 
-from MetaArray import MetaArray
+from MetaArray import axis, MetaArray
 
 
-def axis(name=None, cols=None, values=None, units=None):
-    """Convenience function for generating axis descriptions when defining MetaArrays"""
-    ax = {}
-    cNameOrder = ["name", "units", "title"]
-    if name is not None:
-        ax["name"] = name
-    if values is not None:
-        ax["values"] = values
-    if units is not None:
-        ax["units"] = units
-    if cols is not None:
-        ax["cols"] = []
-        for c in cols:
-            if type(c) != list and type(c) != tuple:
-                c = [c]
-            col = {}
-            for i in range(0, len(c)):
-                col[cNameOrder[i]] = c[i]
-            ax["cols"].append(col)
-    return ax
-
-
-def test():
+def test_metaarray():
     # Create an array with every option possible
     arr = np.zeros((2, 5, 3, 5), dtype=int)
     for i in range(arr.shape[0]):
@@ -166,4 +144,4 @@ def test():
 
 
 if __name__ == "__main__":
-    test()
+    test_metaarray()

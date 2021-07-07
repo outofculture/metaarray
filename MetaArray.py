@@ -814,8 +814,8 @@ class MetaArray(object):
 
         if not HAVE_HDF5:
             try:
-                assert writable is False
-                assert readAllData is not False
+                assert not writable
+                assert readAllData
                 self._readHDF5Remote(fileName)
                 return
             except:
@@ -1168,3 +1168,25 @@ class MetaArray(object):
             file.close()
         else:
             return ret
+
+
+def axis(name=None, cols=None, values=None, units=None):
+    """Convenience function for generating axis descriptions when defining MetaArrays"""
+    ax = {}
+    cNameOrder = ["name", "units", "title"]
+    if name is not None:
+        ax["name"] = name
+    if values is not None:
+        ax["values"] = values
+    if units is not None:
+        ax["units"] = units
+    if cols is not None:
+        ax["cols"] = []
+        for c in cols:
+            if type(c) != list and type(c) != tuple:
+                c = [c]
+            col = {}
+            for i in range(0, len(c)):
+                col[cNameOrder[i]] = c[i]
+            ax["cols"].append(col)
+    return ax
