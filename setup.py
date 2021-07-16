@@ -10,7 +10,7 @@ setup(
     author="Luke Campagnola",
     author_email="luke.campagnola@gmail.com",
     classifiers=[
-        "Development Status :: 4 - Production/Stable",
+        "Development Status :: 5 - Production/Stable",
         "Environment :: Other Environment",
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: MIT License",
