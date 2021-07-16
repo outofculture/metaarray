@@ -10,7 +10,7 @@ Justification
 
 Consider data in the following shape:
 
-![`{'Trial 1': {'Time 0.0': {'Voltage 0': 7.2e-4, 'Voltage 1': 0, 'Current 0': 1.1e-6}, ...}, ...}`](example.png "3 signals across time and trial")
+![3x5x3 cube. X: Signal(Voltage 0, Voltage 1, Current 0). Y: Time(0.0-0.5). Z: Trial(0-2)](https://raw.githubusercontent.com/outofculture/metaarray/main/example.png "3 signals across time and trial")
 
 Notice that each axis has a name and can store different types of meta information:
 
