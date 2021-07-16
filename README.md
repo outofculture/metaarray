@@ -5,26 +5,25 @@ MetaArray is a class that extends ndarray, adding support for per-axis metadata 
 storing data arrays along with units, axis names, column names, axis values, etc. MetaArray objects can be indexed and
 sliced arbitrarily using named axes and columns.
 
-Example Uses
-------------
+Justification
+-------------
 
-Here is an example of the type of data one might store with MetaArray:
+Consider data in the following shape:
 
 ![](example.png)
 
-Notice that each axis is named and can store different types of meta information:
+Notice that each axis has a name and can store different types of meta information:
 
 * The Signal axis has named columns with different units for each column
 * The Time axis associates a numerical value with each row
 * The Trial axis uses normal integer indexes
 
-Data from this array can be accessed many ways:
+Data from this array would best be accessed variously using those names:
 
 ```python
-data[0, 1, 1]
-data[:, "Voltage 1", 0]
-data["Trial": 1, "Signal": "Voltage 0"]
-data["Time": slice(3, 7)]
+initial_v1s = data[:, "Voltage 1", 0]
+trial1_v0 = data["Trial": 1, "Signal": "Voltage 0"]
+time3_to_7 = data["Time": slice(3, 7)]
 ```
 
 Features
@@ -37,22 +36,23 @@ Features
 * Indexing by name:
     * Index each axis by name, so there is no need to remember order of axes
     * Within an axis, index each column by name, so there is no need to remember the order of columns
-* Read/write files easily
+* Read/write files easily (in HDF5 format)
 * Append, extend, and sort convenience functions
 
 Documentation
 -------------
+
+### Installation
+
+`pip install MetaArray`
 
 ### Instantiation
 
 Accepted Syntaxes:
 
 ```python
-# Constructs MetaArray from a preexisting ndarray and info list
+# Constructs MetaArray from a preexisting ndarray with the provided info
 MetaArray(ndarray, info)
-
-# Constructs MetaArray using empty(shape, dtype=type) and info list
-MetaArray((shape), dtype=type, info)
 
 # Constructs MetaArray from file written using MetaArray.write()
 MetaArray(file='fileName')
@@ -117,7 +117,7 @@ use named axes.
 
 ```python
 data["AxisName": "ColumnName"]
-data["ColumnName"]  ## Works only if the named column exists for this axis
+data["ColumnName"]  # Works only if the named column exists for this axis
 data[["ColumnName1", "ColumnName2"]]
 ```
 
@@ -141,16 +141,15 @@ newData = MetaArray(file='fileName')
 
 ### Performance Tips
 
-MetaArray is a subclass of ndarray which overrides the
-`__getitem__` and `__setitem__` methods. Since these methods must alter the structure of the meta information for each
-access, they are quite slow compared to the native methods. As a result, many builtin functions will run very slowly
-when operating on a MetaArray. It is recommended, therefore, that you recast your arrays before performing these
-operations like this:
+MetaArray is a subclass of ndarray which overrides the `__getitem__` and `__setitem__` methods. Since these methods must
+alter the structure of the meta information for each access, they are quite slow compared to the native methods. As a
+result, many builtin functions will run very slowly when operating on a MetaArray. It is recommended, therefore, that
+you recast your arrays before performing these operations like this:
 
 ```python
 data = MetaArray(...)
-data.mean()  ## Very slow
-data.view(ndarray).mean()  ## native speed
+data.mean()  # very slow
+data.view(ndarray).mean()  # native speed
 ```
 
 ### More Examples
