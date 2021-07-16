@@ -10,9 +10,9 @@ new methods for slicing and indexing the array based on this meta data.
 Based on https://scipy-cookbook.readthedocs.io/items/MetaArray.html
 """
 
-import copy
 import os
 import pickle
+from copy import deepcopy
 
 import numpy as np
 
@@ -415,9 +415,9 @@ class MetaArray(object):
     def infoCopy(self, axis=None):
         """Return a deep copy of the axis meta info for this object"""
         if axis is None:
-            return copy.deepcopy(self._info)
+            return deepcopy(self._info)
         else:
-            return copy.deepcopy(self._info[self._interpretAxis(axis)])
+            return deepcopy(self._info[self._interpretAxis(axis)])
 
     def copy(self):
         return MetaArray(self._data.copy(), info=self.infoCopy())
@@ -525,7 +525,7 @@ class MetaArray(object):
         raise Exception("Axis %d has no column named %s.\n  info=%s" % (axis, name, self._info))
 
     def _axisCopy(self, i):
-        return copy.deepcopy(self._info[i])
+        return deepcopy(self._info[i])
 
     def _axisSlice(self, i, cols):
         if "cols" in self._info[i] or "values" in self._info[i]:
@@ -859,9 +859,9 @@ class MetaArray(object):
         # This is needed in the case that HDF5 is not importable due to the use of python-dbg.
         proc = getattr(MetaArray, "_hdf5Process", None)
 
-        if proc == False:
+        if proc is False:
             raise Exception("remote read failed")
-        if proc == None:
+        if proc is None:
             from pyqtgraph import multiprocess as mp
 
             proc = mp.Process(executable="/usr/bin/python")
