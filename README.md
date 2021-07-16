@@ -10,7 +10,7 @@ Justification
 
 Consider data in the following shape:
 
-![](example.png)
+![`{'Trial 1': {'Time 0.0': {'Voltage 0': 7.2e-4, 'Voltage 1': 0, 'Current 0': 1.1e-6}, ...}, ...}`](example.png "3 signals across time and trial")
 
 Notice that each axis has a name and can store different types of meta information:
 
