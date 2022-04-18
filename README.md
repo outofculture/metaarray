@@ -81,7 +81,7 @@ In the case where meta information is to apply to the entire array, (for example
 units) simply add an extra axis description to the end of the info list. All dicts may contain any extra information you
 want.
 
-For example, the data set shown above would look like:
+For example, the data set depicted above would look like:
 
 ```python
 MetaArray((3, 6, 3), dtype=float, info=[
@@ -205,3 +205,13 @@ described (name and units) in the column info for the first axis.
 Contact
 ---------
 Luke Campagnola - `[firstname][lastname]@gmail.com`
+
+
+Changelog
+---------
+
+#### 2.0.3
+Fixes install dependency (thanks @spahlimi).
+
+#### 2.0.0
+Initial independent release.

@@ -21,7 +21,7 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
     description="N-dimensional array with metadata such as axis titles, units, and column names.",
-    install_requires=["numpy", "hdf5"],
+    install_requires=["numpy", "h5df"],
     license="MIT",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -30,5 +30,5 @@ setup(
     packages=find_packages(where="src"),
     python_requires=">=3.7",
     url="https://github.com/outofculture/metaarray",
-    version="2.0.2",
+    version="2.0.3",
 )
