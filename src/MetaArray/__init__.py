@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 MetaArray.py -  Class encapsulating ndarray with meta data
 Copyright 2010  Luke Campagnola
@@ -81,7 +80,8 @@ class MetaArray(object):
         since the actual values are described (name and units) in the column info for the first axis.
     """
 
-    version = u"2"
+    version = "2.0.4"
+    version_tuple = tuple(version.split("."))
 
     # Default hdf5 compression to use when writing
     #   'gzip' is widely available and somewhat slow
@@ -888,17 +888,16 @@ class MetaArray(object):
     @staticmethod
     def readHDF5Meta(root, mmap=False):
         data = {}
-
+        numstrs = map(str, range(10))
         # Pull list of values from attributes and child objects
         for k in root.attrs:
             val = root.attrs[k]
             if isinstance(val, bytes):
                 val = val.decode()
             if isinstance(val, str):  # strings need to be re-evaluated to their original types
-                try:
-                    val = eval(val)
-                except:
-                    raise Exception('Can not evaluate string: "%s"' % val)
+                if val[0] in numstrs and val[-1] not in numstrs:
+                    val = val[:-1]  # handle number formats with trailing types
+                val = eval(val)
             data[k] = val
         for k in root:
             obj = root[k]
