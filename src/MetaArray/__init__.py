@@ -80,7 +80,7 @@ class MetaArray(object):
         since the actual values are described (name and units) in the column info for the first axis.
     """
 
-    version = "2.0.4"
+    version = "2.0.5"
     version_tuple = tuple(version.split("."))
 
     # Default hdf5 compression to use when writing
@@ -888,7 +888,7 @@ class MetaArray(object):
     @staticmethod
     def readHDF5Meta(root, mmap=False):
         data = {}
-        numstrs = map(str, range(10))
+        numstrs = list(map(str, range(10)))
         # Pull list of values from attributes and child objects
         for k in root.attrs:
             val = root.attrs[k]
