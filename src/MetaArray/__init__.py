@@ -276,6 +276,9 @@ class MetaArray(object):
     def __truediv__(self, b):
         return self._binop("__truediv__", b)
 
+    def __abs__(self):
+        return self._uniop("__abs__")
+
     def _binop(self, op, b):
         if isinstance(b, MetaArray):
             b = b.asarray()
@@ -286,6 +289,11 @@ class MetaArray(object):
                 f"Binary operators with MetaArray must return an array of the same "
                 f"shape (this shape is {a.shape}, result shape was {c.shape})"
             )
+        return MetaArray(c, info=self.infoCopy())
+
+    def _uniop(self, op):
+        a = self.asarray()
+        c = getattr(a, op)()
         return MetaArray(c, info=self.infoCopy())
 
     def asarray(self):
