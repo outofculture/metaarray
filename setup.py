@@ -30,5 +30,5 @@ setup(
     packages=find_packages(where="src"),
     python_requires=">=3.7",
     url="https://github.com/outofculture/metaarray",
-    version="2.0.5",
+    version="2.0.6",
 )

@@ -80,7 +80,7 @@ class MetaArray(object):
         since the actual values are described (name and units) in the column info for the first axis.
     """
 
-    version = "2.0.5"
+    version = "2.0.6"
     version_tuple = tuple(version.split("."))
 
     # Default hdf5 compression to use when writing
@@ -277,6 +277,9 @@ class MetaArray(object):
     def __truediv__(self, b):
         return self._binop("__truediv__", b)
 
+    def __abs__(self):
+        return self._uniop("__abs__")
+
     def _binop(self, op, b):
         if isinstance(b, MetaArray):
             b = b.asarray()
@@ -287,6 +290,11 @@ class MetaArray(object):
                 "Binary operators with MetaArray must return an array of the same shape (this shape is %s, result shape was %s)"
                 % (a.shape, c.shape)
             )
+        return MetaArray(c, info=self.infoCopy())
+
+    def _uniop(self, op):
+        a = self.asarray()
+        c = getattr(a, op)()
         return MetaArray(c, info=self.infoCopy())
 
     def asarray(self):
