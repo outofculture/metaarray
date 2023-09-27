@@ -27,11 +27,10 @@ try:
 
         h5py.Group = h5py.highlevel.Group
         h5py.Dataset = h5py.highlevel.Dataset
-
     HAVE_HDF5 = True
-except ImportError:
+except ImportError as exc:
+    h5py_import_error = exc
     h5py = None
-    USE_HDF5 = False
     HAVE_HDF5 = False
 
 
@@ -944,7 +943,8 @@ class MetaArray(object):
         elif HAVE_HDF5 is True:
             return self.writeHDF5(fileName, **opts)
         else:
-            raise Exception("h5py is required for writing .ma hdf5 files, but it could not be imported.")
+            raise Exception("h5py is required for writing .ma hdf5 files, but it could not be imported."
+                            " (set MetaArray.USE_HDF5=False to write in legacy .ma format)") from h5py_import_error
 
     def writeMeta(self, fileName):
         """Used to re-write meta info to the given file.

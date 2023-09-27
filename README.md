@@ -210,6 +210,9 @@ Luke Campagnola - `[firstname][lastname]@gmail.com`
 Changelog
 ---------
 
+#### 2.1.0
+Force hdf5 format when writing unless USE_HDF5 is explicitly set to False.
+
 #### 2.0.3
 Fixes install dependency (thanks @spahlimi).
 
