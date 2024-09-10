@@ -99,7 +99,7 @@ def test_metaarray():
     print(ma[:, np.array([True, True, False, True, False])])
 
     print("\n  ma['Axis4':array([True, False, False, False])]")
-    print(ma["Axis4": np.array([True, False, False, False])])
+    print(ma["Axis4": np.array([True, False, False, False, False])])
 
     # Array operations:
     #  - Concatenate

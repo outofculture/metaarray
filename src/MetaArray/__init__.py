@@ -48,11 +48,11 @@ class MetaArray(object):
     For example:
         A 2D array of altitude values for a topographical map might look like
             info=[
-        {'name': 'lat', 'title': 'Lattitude'}, 
-        {'name': 'lon', 'title': 'Longitude'}, 
-        {'title': 'Altitude', 'units': 'm'}
-      ]
-        In this case, every value in the array represents the altitude in feet at the lat, lon
+                {'name': 'lat', 'title': 'Lattitude'},
+                {'name': 'lon', 'title': 'Longitude'},
+                {'title': 'Altitude', 'units': 'm'}
+            ]
+        In this case, every value in the array represents the altitude in meters at the lat, lon
         position represented by the array index. All of the following return the 
         value at lat=10, lon=5:
             array[10, 5]
@@ -62,13 +62,13 @@ class MetaArray(object):
         represents the average rainfall for each location. We could easily store these as two 
         separate arrays or combine them into a 3D array with this description:
             info=[
-        {'name': 'vals', 'cols': [
-          {'name': 'altitude', 'units': 'm'}, 
-          {'name': 'rainfall', 'units': 'cm/year'}
-        ]},
-        {'name': 'lat', 'title': 'Lattitude'}, 
-        {'name': 'lon', 'title': 'Longitude'}
-      ]
+                {'name': 'vals', 'cols': [
+                    {'name': 'altitude', 'units': 'm'},
+                    {'name': 'rainfall', 'units': 'cm/year'}
+                ]},
+                {'name': 'lat', 'title': 'Lattitude'},
+                {'name': 'lon', 'title': 'Longitude'}
+            ]
         We can now access the altitude values with array[0] or array['altitude'], and the
         rainfall values with array[1] or array['rainfall']. All of the following return
         the rainfall value at lat=10, lon=5:
@@ -133,35 +133,35 @@ class MetaArray(object):
         else:
             try:
                 info = list(info)
-            except:
-                raise Exception("Info must be a list of axis specifications")
+            except Exception as e:
+                raise ValueError("Info must be a list of axis specifications") from e
             if len(info) < self.ndim + 1:
                 info.extend([{}] * (self.ndim + 1 - len(info)))
             elif len(info) > self.ndim + 1:
-                raise Exception("Info parameter must be list of length ndim+1 or less.")
+                raise ValueError("Info parameter must be list of length ndim+1 or less.")
             for i in range(len(info)):
                 if not isinstance(info[i], dict):
                     if info[i] is None:
                         info[i] = {}
                     else:
-                        raise Exception("Axis specification must be Dict or None")
+                        raise ValueError("Axis specification must be Dict or None")
                 if i < self.ndim and "values" in info[i]:
                     if type(info[i]["values"]) is list:
                         info[i]["values"] = np.array(info[i]["values"])
                     elif type(info[i]["values"]) is not np.ndarray:
-                        raise Exception("Axis values must be specified as list or ndarray")
+                        raise ValueError("Axis values must be specified as list or ndarray")
                     if info[i]["values"].ndim != 1 or info[i]["values"].shape[0] != self.shape[i]:
-                        raise Exception(
-                            "Values array for axis %d has incorrect shape. (given %s, but should be %s)"
-                            % (i, str(info[i]["values"].shape), str((self.shape[i],)))
+                        raise ValueError(
+                            f"Values array for axis {i} has incorrect shape. (given "
+                            f"{info[i]['values'].shape}, but should be ({self.shape[i]},))"
                         )
                 if i < self.ndim and "cols" in info[i]:
                     if not isinstance(info[i]["cols"], list):
                         info[i]["cols"] = list(info[i]["cols"])
                     if len(info[i]["cols"]) != self.shape[i]:
-                        raise Exception(
-                            "Length of column list for axis %d does not match data. (given %d, but should be %d)"
-                            % (i, len(info[i]["cols"]), self.shape[i])
+                        raise ValueError(
+                            f"Length of column list for axis {i} does not match data. (given "
+                            f"{len(info[i]['cols'])}, but should be {self.shape[i]})"
                         )
             self._info = info
 
@@ -282,9 +282,9 @@ class MetaArray(object):
         a = self.asarray()
         c = getattr(a, op)(b)
         if c.shape != a.shape:
-            raise Exception(
-                "Binary operators with MetaArray must return an array of the same shape (this shape is %s, result shape was %s)"
-                % (a.shape, c.shape)
+            raise ValueError(
+                f"Binary operators with MetaArray must return an array of the same "
+                f"shape (this shape is {a.shape}, result shape was {c.shape})"
             )
         return MetaArray(c, info=self.infoCopy())
 
@@ -305,7 +305,7 @@ class MetaArray(object):
         if typ is np.ndarray:
             return self.asarray()
         else:
-            raise Exception("invalid view type: %s" % str(typ))
+            raise TypeError(f"invalid view type: {typ}")
 
     def axisValues(self, axis):
         """Return the list of values for an axis"""
@@ -676,7 +676,7 @@ class MetaArray(object):
         """Read meta array from the top of a file. Read lines until a blank line is reached.
         This function should ideally work for ALL versions of MetaArray.
         """
-        meta = u""
+        meta = ""
         # Read meta information until the first blank line
         while True:
             line = fd.readline().strip()
@@ -809,7 +809,7 @@ class MetaArray(object):
             readAllData = kargs["close"]
 
         if readAllData is True and writable is True:
-            raise Exception("Incompatible arguments: readAllData=True and writable=True")
+            raise ArgumentError("Incompatible arguments: readAllData=True and writable=True")
 
         if not HAVE_HDF5:
             try:
@@ -818,8 +818,8 @@ class MetaArray(object):
                 self._readHDF5Remote(fileName)
                 return
             except:
-                raise Exception(
-                    "The file '%s' is HDF5-formatted, but the HDF5 library (h5py) was not found." % fileName
+                raise ImportError(
+                    f"The file '{fileName}' is HDF5-formatted, but the HDF5 library (h5py) was not found."
                 )
 
         # by default, readAllData=True for files < 500MB
@@ -908,7 +908,7 @@ class MetaArray(object):
                 else:
                     val = obj[:]
             else:
-                raise Exception("Don't know what to do with type '%s'" % str(type(obj)))
+                raise TypeError(f"Don't know what to do with type '{type(obj)}'")
             data[k] = val
 
         typ = root.attrs["_metaType_"]
@@ -952,7 +952,7 @@ class MetaArray(object):
         f = h5py.File(fileName, "r+")
         if f.attrs["MetaArray"] != MetaArray.version:
             raise Exception(
-                "The file %s was created with a different version of MetaArray. Will not modify." % fileName
+                f"The file {fileName} was created with a different version of MetaArray. Will not modify."
             )
         del f["info"]
 
@@ -980,7 +980,6 @@ class MetaArray(object):
             appAxis = self._interpretAxis(appAxis)
             cs = [min(100000, x) for x in self.shape]
             cs[appAxis] = 1
-            dsOpts["chunks"] = tuple(cs)
 
         # if there are columns, then we can guess a different chunk shape
         # (read one column at a time)
@@ -989,7 +988,8 @@ class MetaArray(object):
             for i in range(self.ndim):
                 if "cols" in self._info[i]:
                     cs[i] = 1
-            dsOpts["chunks"] = tuple(cs)
+
+        dsOpts["chunks"] = tuple(cs)
 
         # update options if they were passed in
         for k in dsOpts:
@@ -1016,7 +1016,7 @@ class MetaArray(object):
             f = h5py.File(fileName, "r+")
             if f.attrs["MetaArray"] != MetaArray.version:
                 raise Exception(
-                    "The file %s was created with a different version of MetaArray. Will not modify." % fileName
+                    f"The file {fileName} was created with a different version of MetaArray. Will not modify."
                 )
 
             # resize data and write in new values
@@ -1031,20 +1031,18 @@ class MetaArray(object):
             # add axis values if they are present.
             axKeys = ["values"]
             axKeys.extend(opts.get("appendKeys", []))
-            axInfo = f["info"][str(ax)]
+            axInfo = f["info"][str(ax)]  # ax is e.g. 0
             for key in axKeys:
-                if key in axInfo:
-                    v = axInfo[key]
-                    v2 = self._info[ax][key]
-                    shape = list(v.shape)
-                    shape[0] += v2.shape[0]
-                    v.resize(shape)
-                    v[-v2.shape[0]:] = v2
-                else:
+                if key not in axInfo:
                     raise TypeError(
-                        'Cannot append to axis info key "%s"; this key is not present in the target file.' % key
+                        f'Cannot append to axis info key "{key}"; this key is not present in the target file.'
                     )
-            f.close()
+                v = axInfo[key]
+                v2 = self._info[ax][key]
+                shape = list(v.shape)  # only possible if v is a Dataset (not a Group)
+                shape[0] += v2.shape[0]
+                v.resize(shape)
+                v[-v2.shape[0]:] = v2
         else:
             f = h5py.File(fileName, "w")
             f.attrs["MetaArray"] = MetaArray.version
@@ -1058,13 +1056,14 @@ class MetaArray(object):
                 if "maxshape" in dsOpts:
                     del dsOpts["maxshape"]
             self.writeHDF5Meta(f, "info", self._info, **dsOpts)
-            f.close()
+
+        f.close()
 
     def writeHDF5Meta(self, root, name, data, **dsOpts):
         if isinstance(data, np.ndarray):
             dsOpts["maxshape"] = (None,) + data.shape[1:]
             root.create_dataset(name, data=data, **dsOpts)
-        elif isinstance(data, list) or isinstance(data, tuple):
+        elif isinstance(data, (list, tuple)):
             gr = root.create_group(name)
             if isinstance(data, list):
                 gr.attrs["_metaType_"] = "list"
@@ -1078,18 +1077,13 @@ class MetaArray(object):
             gr.attrs["_metaType_"] = "dict"
             for k, v in data.items():
                 self.writeHDF5Meta(gr, k, v, **dsOpts)
-        elif (
-                isinstance(data, int)
-                or isinstance(data, float)
-                or isinstance(data, np.integer)
-                or isinstance(data, np.floating)
-        ):
+        elif isinstance(data, (int, float, np.integer, np.floating)):
             root.attrs[name] = data
         else:
             try:  # strings, bools, None are stored as repr() strings
                 root.attrs[name] = repr(data)
             except:
-                print("Can not store meta data of type '%s' in HDF5. (key is '%s')" % (str(type(data)), str(name)))
+                print(f"Can not store meta data of type '{type(data)}' in HDF5. (key is '{name}')")
                 raise
 
     def writeMa(self, fileName, appendAxis=None, newFile=False):
@@ -1148,23 +1142,22 @@ class MetaArray(object):
         """Write 2D array to CSV file or return the string if no filename is given"""
         if self.ndim > 2:
             raise Exception("CSV Export is only for 2D arrays")
-        if fileName is not None:
-            file = open(fileName, "w")
+        fh = None if fileName is None else open(fileName, "w")
         ret = ""
         if "cols" in self._info[0]:
             s = ",".join([x["name"] for x in self._info[0]["cols"]]) + "\n"
             if fileName is not None:
-                file.write(s)
+                fh.write(s)
             else:
                 ret += s
         for row in range(0, self.shape[1]):
             s = ",".join(["%g" % x for x in self[:, row]]) + "\n"
             if fileName is not None:
-                file.write(s)
+                fh.write(s)
             else:
                 ret += s
         if fileName is not None:
-            file.close()
+            fh.close()
         else:
             return ret
 
@@ -1172,7 +1165,6 @@ class MetaArray(object):
 def axis(name=None, cols=None, values=None, units=None):
     """Convenience function for generating axis descriptions when defining MetaArrays"""
     ax = {}
-    cNameOrder = ["name", "units", "title"]
     if name is not None:
         ax["name"] = name
     if values is not None:
@@ -1180,12 +1172,11 @@ def axis(name=None, cols=None, values=None, units=None):
     if units is not None:
         ax["units"] = units
     if cols is not None:
+        cNameOrder = ["name", "units", "title"]
         ax["cols"] = []
         for c in cols:
-            if type(c) != list and type(c) != tuple:
+            if type(c) not in [list, tuple]:
                 c = [c]
-            col = {}
-            for i in range(0, len(c)):
-                col[cNameOrder[i]] = c[i]
+            col = {cNameOrder[i]: c[i] for i in range(0, len(c))}
             ax["cols"].append(col)
     return ax
