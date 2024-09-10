@@ -663,7 +663,7 @@ class MetaArray(object):
                 if not kwargs.get("readAllData", True):
                     self._data = np.empty(meta["shape"], dtype=meta["type"])
                 if "version" in meta:
-                    ver = meta["version"]
+                    ver = meta["version"].split(".")[0]
                 else:
                     ver = 1
                 rFuncName = "_readData%s" % str(ver)
@@ -681,7 +681,7 @@ class MetaArray(object):
         meta = ""
         # Read meta information until the first blank line
         while True:
-            line = fd.readline().strip()
+            line = fd.readline().strip().decode("utf-8")
             if line == "":
                 break
             meta += line
@@ -756,7 +756,7 @@ class MetaArray(object):
             while True:
                 # Extract one non-blank line
                 while True:
-                    line = fd.readline()
+                    line = fd.readline().decode("utf-8")
                     if line != "\n":
                         break
                 if line == "":
