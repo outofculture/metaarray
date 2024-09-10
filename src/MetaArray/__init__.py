@@ -79,8 +79,8 @@ class MetaArray(object):
         since the actual values are described (name and units) in the column info for the first axis.
     """
 
-    version = "2.0.5"
-    version_tuple = tuple(version.split("."))
+    version = "2.1.1"
+    version_tuple = tuple(map(int, version.split(".")))
 
     # Default hdf5 compression to use when writing
     #   'gzip' is widely available and somewhat slow
@@ -840,10 +840,10 @@ class MetaArray(object):
             ver = ver.decode("utf-8")
         except:
             pass
-        if ver > MetaArray.version:
+        if tuple(map(int, ver.split('.'))) > MetaArray.version_tuple:
             print(
-                "Warning: This file was written with MetaArray version %s, but you are using version %s. (Will attempt to read anyway)"
-                % (str(ver), str(MetaArray.version))
+                f"Warning: This file was written with MetaArray version {ver}, but you are using "
+                f"version {MetaArray.version}. (Will attempt to read anyway)"
             )
         meta = MetaArray.readHDF5Meta(f["info"])
         self._info = meta
