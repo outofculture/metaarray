@@ -291,6 +291,8 @@ class MetaArray(object):
     def asarray(self):
         if isinstance(self._data, np.ndarray):
             return self._data
+        elif isinstance(self._data, h5py.Dataset):
+            return self._data[:]
         else:
             return np.array(self._data)
 
@@ -846,12 +848,16 @@ class MetaArray(object):
         meta = MetaArray.readHDF5Meta(f["info"])
         self._info = meta
 
-        if writable or not readAllData:  # read all data, convert to ndarray, close file
-            self._data = f["data"]
+        dataset = f["data"]
+        if writable:
+            self._data = np.memmap(f.filename, dtype=dataset.dtype, shape=dataset.shape, mode="r+")
             self._openFile = f
-        else:
-            self._data = f["data"][:]
+        elif readAllData:
+            self._data = dataset[:]
             f.close()
+        else:
+            self._data = dataset
+            self._openFile = f
 
     def _readHDF5Remote(self, fileName):
         # Used to read HDF5 files via remote process.

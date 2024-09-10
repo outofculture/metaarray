@@ -117,14 +117,22 @@ def test_metaarray():
     ma.write(tf)
     ma2 = MetaArray(file=tf)
 
-    print("\nArrays are equivalent:", (ma == ma2).all())
-    os.remove(tf)
+    print("\nArrays are equivalent:", np.all(ma == ma2))
+
+    del ma
+    del ma2
+    ma = MetaArray(file=tf, writable=True)
+    before = ma[0][0][0].mean()
+    ma[0][0] += 1
+    after = ma[0][0][0].mean()
+    assert before + 1 == after, (before, after)
 
     # CSV write
 
     # append mode
 
     print("\n================append test (%s)===============" % tf)
+    ma = MetaArray(file=tf)
     ma["Axis2":0:2].write(tf, appendAxis="Axis2")
     for i in range(2, ma.shape[1]):
         ma["Axis2":[i]].write(tf, appendAxis="Axis2")
