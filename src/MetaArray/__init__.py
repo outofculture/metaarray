@@ -117,7 +117,7 @@ class MetaArray(object):
             elif isinstance(data, tuple):  # create empty array with specified shape
                 self._data = np.empty(data, dtype=dtype)
             else:
-                self._data = np.asarray(data, dtype=dtype, copy=copy)
+                self._data = np.asarray(data, dtype=dtype) # , copy=copy)
 
         # run sanity checks on info structure
         self.checkInfo()
