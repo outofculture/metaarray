@@ -117,13 +117,12 @@ class MetaArray(object):
             elif isinstance(data, tuple):  # create empty array with specified shape
                 self._data = np.empty(data, dtype=dtype)
             else:
-                self._data = np.asarray(data, dtype=dtype) # , copy=copy)
+                self._data = np.asarray(data, dtype=dtype)
 
         # run sanity checks on info structure
         self.checkInfo()
 
     def checkInfo(self):
-        print(dir(self._info))
         info = np.asarray(self._info)
         if info is None:
             if self._data is None:
