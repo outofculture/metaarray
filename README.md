@@ -210,6 +210,10 @@ Luke Campagnola - `[firstname][lastname]@gmail.com`
 Changelog
 ---------
 
+### 2.2.0
+* Support for abs and other unary operations.
+* Bugfix to handle modern numpy
+
 ### 2.1.1
 Fix writeable HDF5.
 
