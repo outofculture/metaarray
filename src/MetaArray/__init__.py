@@ -79,7 +79,7 @@ class MetaArray(object):
         since the actual values are described (name and units) in the column info for the first axis.
     """
 
-    version = "2.2.1"
+    version = "2.2.2"
     version_tuple = tuple(map(int, version.split(".")))
 
     # Default hdf5 compression to use when writing

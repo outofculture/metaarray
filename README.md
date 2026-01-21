@@ -152,6 +152,84 @@ data.mean()  # very slow
 data.view(ndarray).mean()  # native speed
 ```
 
+### Plotting
+
+MetaArray supports interactive visualization through pyqtgraph. To use plotting features, install the optional plotting dependencies:
+
+```bash
+pip install MetaArray[plotting]
+```
+
+#### Basic Plotting
+
+The `MetaArrayPlotWidget` provides automatic visualization of 2D MetaArray data:
+
+```python
+from MetaArray import MetaArray
+from MetaArray.plotting import MetaArrayPlotWidget
+from pyqtgraph.Qt import QtWidgets
+import numpy as np
+
+# Create sample data
+data = np.random.randn(100, 3)
+info = [
+    {"name": "Time", "units": "s", "values": np.linspace(0, 1.0, 100)},
+    {
+        "name": "Signal",
+        "cols": [
+            {"name": "Voltage 0", "units": "V"},
+            {"name": "Voltage 1", "units": "V"},
+            {"name": "Current 0", "units": "A"}
+        ]
+    }
+]
+ma = MetaArray(data, info=info)
+
+# Create and display plot widget
+app = QtWidgets.QApplication([])
+widget = MetaArrayPlotWidget()
+widget.plot(ma)
+widget.show()
+app.exec()
+```
+
+#### Features
+
+* **Automatic multi-plot layout**: Each column in your MetaArray is displayed as a separate subplot
+* **Axis labels from metadata**: Plot labels and units are automatically extracted from the array info
+* **Scrollable plots**: When you have many subplots, the widget provides scroll bars for easy navigation
+* **Configurable minimum height**: Use `setMinimumPlotHeight()` to control the minimum height for each subplot
+
+```python
+widget = MetaArrayPlotWidget()
+widget.setMinimumPlotHeight(100)  # Set minimum height in pixels
+widget.plot(ma)
+```
+
+#### Plot Customization
+
+You can pass standard pyqtgraph plotting arguments to customize the appearance:
+
+```python
+# Plot with custom pen color and symbols
+widget.plot(ma, pen='r', symbol='o', symbolSize=5)
+```
+
+#### Using MetaArrayPlotItem Directly
+
+For more control, you can use `MetaArrayPlotItem` directly within your own pyqtgraph layouts:
+
+```python
+from MetaArray.plotting import MetaArrayPlotItem
+import pyqtgraph as pg
+
+win = pg.GraphicsLayoutWidget()
+plot_item = MetaArrayPlotItem()
+win.setCentralItem(plot_item)
+plot_item.plot(ma)
+win.show()
+```
+
 ### More Examples
 
 A 2D array of altitude values for a topographical map might look like
@@ -209,6 +287,12 @@ Luke Campagnola - `[firstname][lastname]@gmail.com`
 
 Changelog
 ---------
+
+### 2.2.2
+* Add pyqtgraph plotting widgets for MetaArray visualization
+* Fix class inheritance bug in MultiPlotItem
+* Add comprehensive test suite for plotting functionality
+* Add plotting documentation to README
 
 ### 2.2.0
 * Support for abs and other unary operations.
