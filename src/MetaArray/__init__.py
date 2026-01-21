@@ -79,7 +79,7 @@ class MetaArray(object):
         since the actual values are described (name and units) in the column info for the first axis.
     """
 
-    version = "2.2.0"
+    version = "2.2.1"
     version_tuple = tuple(map(int, version.split(".")))
 
     # Default hdf5 compression to use when writing
@@ -123,7 +123,7 @@ class MetaArray(object):
         self.checkInfo()
 
     def checkInfo(self):
-        info = np.asarray(self._info)
+        info = self._info
         if info is None:
             if self._data is None:
                 return
